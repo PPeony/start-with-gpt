@@ -1,12 +1,14 @@
 from langchain_core.chat_history import BaseChatMessageHistory, InMemoryChatMessageHistory
 from langchain_core.runnables import RunnableWithMessageHistory
-from langchain_openai import ChatOpenAI
-from langchain_core.messages import HumanMessage
 
-chat_model = ChatOpenAI(model="gpt-4o-mini")
+from class09.ChatDashScope import ChatDashScope
+
+# 创建 Chat 模型实例
+chat_model = ChatDashScope(
+    model="qwen-max", temperature=0.5
+)
 
 store = {}
-
 
 def get_session_history(session_id: str) -> BaseChatMessageHistory:
     if session_id not in store:
@@ -23,7 +25,7 @@ while True:
     if user_input.lower() == 'exit':
         break
     stream = with_message_history.stream(
-        [HumanMessage(content=user_input)],
+        {"input": user_input},
         config=config
     )
     for chunk in stream:
