@@ -56,14 +56,14 @@ def init_driver() -> webdriver.Chrome:
     options = Options()
     options.add_argument('--disable-gpu')  # 禁用GPU渲染
     options.add_argument('--incognito')  # 无痕模式
-    options.add_argument('--ignore-certificate-errors-spki-list')  # 忽略与证书相关的错误  
-    options.add_argument('--disable-notifications')  # 禁用浏览器通知和推送API  
+    options.add_argument('--ignore-certificate-errors-spki-list')  # 忽略与证书相关的错误
+    options.add_argument('--disable-notifications')  # 禁用浏览器通知和推送API
     options.add_argument(f'user-agent={get_UA()}')  # 修改用户代理信息
-    options.add_argument('--window-name=huya_test')  # 设置初始窗口用户标题  
-    options.add_argument('--window-workspace=1')  # 指定初始窗口工作区  # 
-    options.add_argument('--disable-extensions')  # 禁用浏览器扩展  
-    options.add_argument('--force-dark-mode')  # 使用暗模式  
-    options.add_argument('--start-fullscreen')  # 指定浏览器是否以全屏模式启，与进入浏览器后按F11效果相同  
+    options.add_argument('--window-name=huya_test')  # 设置初始窗口用户标题
+    options.add_argument('--window-workspace=1')  # 指定初始窗口工作区  #
+    options.add_argument('--disable-extensions')  # 禁用浏览器扩展
+    options.add_argument('--force-dark-mode')  # 使用暗模式
+    options.add_argument('--start-fullscreen')  # 指定浏览器是否以全屏模式启，与进入浏览器后按F11效果相同
     options.add_argument('--start-maximized')
     # options.add_argument('--proxy-server=http://z976.kdltps.com:15818')
     # path = "D:\\Program Files\\chrome-win64\\chrome.exe"
@@ -100,7 +100,8 @@ def listjob_by_keyword(keyword: str, page: int = 1, size: int = 30) -> str:
                                               '.job-list-container')))  # 等待页面加载到出现job-list-box 为止
 
     li_list = driver.find_elements(By.CSS_SELECTOR,
-                                   ".rec-job-list")
+                                   ".job-card-box")
+
     jobs = []
     for li in li_list:
         job_name_list = li.find_elements(By.CSS_SELECTOR, ".job-name")
@@ -108,6 +109,7 @@ def listjob_by_keyword(keyword: str, page: int = 1, size: int = 30) -> str:
             continue
         job = {}
         job["job_name"] = job_name_list[0].text
+        print("job_name="+job["job_name"])
         job_salary_list = li.find_elements(By.CSS_SELECTOR, ".job-info .salary")
         if job_salary_list and len(job_salary_list) > 0:
             job["job_salary"] = job_salary_list[0].text
@@ -118,7 +120,7 @@ def listjob_by_keyword(keyword: str, page: int = 1, size: int = 30) -> str:
             job["job_tags"] = [tag.text for tag in job_tags_list]
         else:
             job["job_tags"] = []
-        com_name = li.find_element(By.CSS_SELECTOR, ".company-name")
+        com_name = li.find_element(By.CSS_SELECTOR, ".boss-name")
         if com_name:
             job["com_name"] = com_name.text
         else:
@@ -128,7 +130,7 @@ def listjob_by_keyword(keyword: str, page: int = 1, size: int = 30) -> str:
             job["com_tags"] = [tag.text for tag in com_tags_list]
         else:
             job["com_tags"] = []
-        job_tags_list_footer = li.find_elements(By.CSS_SELECTOR, ".job-card-footer  li")
+        job_tags_list_footer = li.find_elements(By.CSS_SELECTOR, ".job-card-footer")
         if job_tags_list_footer and len(job_tags_list_footer) > 0:
             job["job_tags_footer"] = [tag.text for tag in job_tags_list_footer]
         else:
